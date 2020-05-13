@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+ 
+    {% block content %}
+
+    <br>    
+    
+    {% if user.is_authenticated %}
+    <div id="float" class="float-left">
+
+    </div>
+    <div class="container center">
+    <a class="btn btn-primary" href="{% url 'createCard' %}">Create Flash Cards</a>
+</div>
+   
+    <div class="container top1">
+      
+       
+        <div class="FlashCard"><div class="question"></div> <div class="answer"></div>
+    </div>
+   
+    </div>
+    {% else %}
+
+    {% endif %}
+
+
+    <script>
+        var questions = [];
+        var answers = [];
+        var subjects = [];
+        var uniqueSubjects = [];
+        {% if user.is_authenticated %}
+        {% for card in cards %}
+        questions.push('{{ card.question }}');
+        answers.push('{{ card.answer }}');
+        subjects.push('{{ card.subject }}');
+        {% endfor %}
+        {% endif %}
+
+            $.each(subjects, function(i, el){
+                if($.inArray(el, uniqueSubjects) === -1) uniqueSubjects.push(el);
+            });
+
+    
+
+    
+
+        var pointer = 0;
+        var pointera = 0;
+        $(".question").text(questions[0]);
+        $(".answer").text(answers[0]);
+
+        $(".answer").hide();
+        $("div.FlashCard").each(function() {
+            $(this).click(function() {
+                
+                pointer += 1;
+                if (pointer === 2) {
+                    pointer = 0;
+                    pointera += 1;
+                    if (pointera == questions.length) {
+                        pointera = 0;
+                    }
+                    $(".question").text(questions[pointera]);
+                     $(".answer").text(answers[pointera]);
+                }
+              
+                $(this).children('.question').toggle();
+                $(this).children('.answer').toggle();
+               
+            });
+        });
+    </script>
+    {% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+ 
+    {% block content %}
+
+    <br>    
+    
+    {% if user.is_authenticated %}
+    <div class="container">
+        <a id="centerMain" class="btn btn-primary subjects-list" href="{% url 'createCard' %}">Create Flash Cards</a>
+    <div id="float" class="float-center">
+
+    </div>
+</div>
+    {% endif %}
+
+
+    <script>
+        var questions = [];
+        var answers = [];
+        var subjects = [];
+        var uniqueSubjects = [];
+        {% if user.is_authenticated %}
+        {% for card in cards %}
+        questions.push('{{ card.question }}');
+        answers.push('{{ card.answer }}');
+        subjects.push('{{ card.subject }}');
+        {% endfor %}
+        {% endif %}
+
+            $.each(subjects, function(i, el){
+                if($.inArray(el, uniqueSubjects) === -1) uniqueSubjects.push(el);
+            });
+
+            for (i=0; i < uniqueSubjects.length; i++) {
+                document.getElementById("float").innerHTML += "<form class='subjects-list' action='subject/" + uniqueSubjects[i] + "' method='POST'>" + '{% csrf_token %}' + "<button id='btn-class' class='btn btn-secondary btn-class'></form>" + uniqueSubjects[i] + "</button>";
+                
+            }
+
+    
+
+        var pointer = 0;
+        var pointera = 0;
+        $(".question").text(questions[0]);
+        $(".answer").text(answers[0]);
+
+        $(".answer").hide();
+        $("div.FlashCard").each(function() {
+            $(this).click(function() {
+                
+                pointer += 1;
+                if (pointer === 2) {
+                    pointer = 0;
+                    pointera += 1;
+                    if (pointera == questions.length) {
+                        pointera = 0;
+                    }
+                    $(".question").text(questions[pointera]);
+                     $(".answer").text(answers[pointera]);
+                }
+                $(this).children('.question').toggle();
+                $(this).children('.answer').toggle();
+               
+            });
+        });
+
+//$(document).ready(function(){
+ //   $(".answer").hide()
+ // $(".FlashCard").click(function(){
+  //  $(".question").fadeToggle()
+   // $(".answer").fadeToggle()
+    
+  //});
+  //});
+    </script>
+    {% endblock %}
